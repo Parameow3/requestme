@@ -37,6 +37,11 @@ export default function ManagerDashboard() {
   }, [])
 
   const fetchData = async () => {
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     
     // 1. Get Current User Role
@@ -93,6 +98,8 @@ export default function ManagerDashboard() {
       nextStatus = 'approved'
     }
 
+    if (!supabase) return
+
     // Update Database
     const { error } = await supabase
       .from('expenses')
@@ -112,6 +119,8 @@ export default function ManagerDashboard() {
 
   // Handle Expense Rejection
   const handleExpenseRejection = async (expense: Expense) => {
+    if (!supabase) return
+
     const { error } = await supabase
       .from('expenses')
       .update({ status: 'rejected' })
@@ -162,6 +171,8 @@ export default function ManagerDashboard() {
       nextStatus = 'approved'
     }
 
+    if (!supabase) return
+
     // Update Database
     const { error } = await supabase
       .from('purchase_orders')
@@ -180,6 +191,8 @@ export default function ManagerDashboard() {
 
   // Handle PO Rejection
   const handlePORejection = async (po: PurchaseOrder) => {
+    if (!supabase) return
+
     const { error } = await supabase
       .from('purchase_orders')
       .update({ status: 'rejected' })

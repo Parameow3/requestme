@@ -15,6 +15,12 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
 
+    if (!supabase) {
+      alert('Supabase is not configured')
+      setLoading(false)
+      return
+    }
+
     if (isSignUp) {
       // --- SIGN UP LOGIC ---
       const { error } = await supabase.auth.signUp({

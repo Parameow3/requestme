@@ -17,10 +17,14 @@ export default function NotificationBell() {
   const unreadCount = notifications.filter(n => !n.is_read).length
 
   useEffect(() => {
+    if (!supabase) return
+
+    const client = supabase
+
     fetchNotifications()
 
     // Real-time listener: Update immediately when a new notification comes in
-    const channel = supabase
+    const channel = client
       .channel('realtime-notifications')
       .on(
         'postgres_changes',
@@ -33,7 +37,7 @@ export default function NotificationBell() {
       .subscribe()
 
     return () => { 
-      supabase.removeChannel(channel) 
+      client.removeChannel(channel) 
     }
   }, [])
 
@@ -56,6 +60,8 @@ export default function NotificationBell() {
   }, [isOpen])
 
   const fetchNotifications = async () => {
+    if (!supabase) return
+
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
@@ -74,7 +80,7 @@ export default function NotificationBell() {
     setIsOpen(!isOpen)
     
     // Mark as read when opening the dropdown
-    if (!wasOpen && unreadCount > 0) {
+    if (!wasOpen && unreadCount > 0 && supabase) {
       // Optimistic update
       const updated = notifications.map(n => ({ ...n, is_read: true }))
       setNotifications(updated)

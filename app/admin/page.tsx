@@ -25,6 +25,11 @@ export default function AdminPanel() {
   const checkAccessAndFetch = async () => {
     setLoading(true)
 
+    if (!supabase) {
+      router.push('/login')
+      return
+    }
+
     // 1. Security Check: Are you an admin?
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -61,6 +66,8 @@ export default function AdminPanel() {
   }
 
   const handleRoleChange = async (userId: string, newRole: string) => {
+    if (!supabase) return
+
     // Optimistic UI update (update screen before DB finishes)
     setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u))
 

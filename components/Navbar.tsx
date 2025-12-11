@@ -12,13 +12,17 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   useEffect(() => {
+    if (!supabase) return
+
+    const client = supabase
+
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data: { session } } = await client.auth.getSession()
       setUser(session?.user || null)
     }
     checkUser()
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: authListener } = client.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null)
     })
 
@@ -29,10 +33,14 @@ export default function Navbar() {
 
   // Fetch user role for admin check
   useEffect(() => {
+    if (!supabase) return
+
+    const client = supabase
+
     const getRole = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user } } = await client.auth.getUser()
       if (user) {
-        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+        const { data } = await client.from('profiles').select('role').eq('id', user.id).single()
         setRole(data?.role || 'employee')
       }
     }
@@ -40,6 +48,7 @@ export default function Navbar() {
   }, [user])
 
   const handleSignOut = async () => {
+    if (!supabase) return
     await supabase.auth.signOut()
     router.push('/login')
     setIsMenuOpen(false)
