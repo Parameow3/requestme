@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import PushNotificationManager from "@/components/PushNotificationManager";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -42,6 +43,7 @@ export default function RootLayout({
         <main className="min-h-screen">
           {children}
         </main>
+        <PushNotificationManager />
       </body>
     </html>
   );
